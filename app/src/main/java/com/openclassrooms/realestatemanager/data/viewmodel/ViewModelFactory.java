@@ -3,7 +3,7 @@ package com.openclassrooms.realestatemanager.data.viewmodel;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.openclassrooms.realestatemanager.data.room.EstateDataRepository;
+import com.openclassrooms.realestatemanager.data.room.repo.EstateDataRepository;
 
 import java.util.concurrent.Executor;
 

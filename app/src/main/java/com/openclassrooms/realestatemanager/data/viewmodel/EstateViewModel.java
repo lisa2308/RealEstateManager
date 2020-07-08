@@ -1,11 +1,10 @@
 package com.openclassrooms.realestatemanager.data.viewmodel;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.openclassrooms.realestatemanager.data.entities.Estate;
-import com.openclassrooms.realestatemanager.data.room.EstateDataRepository;
+import com.openclassrooms.realestatemanager.data.room.repo.EstateDataRepository;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -36,4 +35,11 @@ public class EstateViewModel extends ViewModel {
         return this.currentEstateList;
     }
 
+    public void createEstate(Estate estate) {
+        estateDataRepository.createEstate(estate);
+    }
+
+    public void updateEstate(long estateId ) {
+
+    }
 }

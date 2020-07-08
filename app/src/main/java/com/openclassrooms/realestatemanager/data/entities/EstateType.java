@@ -17,4 +17,13 @@ public enum EstateType {
     public String getType() {
         return this.type ;
     }
+
+    public static EstateType fromDisplayString(String displayString) {
+        for (EstateType type : EstateType.values()) {
+            if (type.getType().equals(displayString)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

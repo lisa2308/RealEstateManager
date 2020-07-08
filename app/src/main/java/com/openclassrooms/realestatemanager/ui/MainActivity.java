@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.openclassrooms.realestatemanager.R;
+import com.openclassrooms.realestatemanager.ui.estate.addupdate.EstateAddUpdateActivity;
 import com.openclassrooms.realestatemanager.ui.estate.list.EstateListFragment;
 import com.openclassrooms.realestatemanager.ui.loan.LoanActivity;
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.activity_main_menu_add_estate:
+                startActivity(new Intent(this, EstateAddUpdateActivity.class));
                 return true;
             case R.id.activity_main_menu_search:
                 return true;
@@ -67,4 +69,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.addToBackStack(fragment.getClass().getSimpleName());
         transaction.commit();
     }
+
+
 }

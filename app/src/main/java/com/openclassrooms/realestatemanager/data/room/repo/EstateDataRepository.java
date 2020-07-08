@@ -1,9 +1,9 @@
-package com.openclassrooms.realestatemanager.data.room;
+package com.openclassrooms.realestatemanager.data.room.repo;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.openclassrooms.realestatemanager.data.entities.Estate;
+import com.openclassrooms.realestatemanager.data.room.dao.EstateDao;
 
 import java.util.List;
 
@@ -17,5 +17,9 @@ public class EstateDataRepository {
 
     public LiveData<List<Estate>> getEstateList() {
         return estateDao.getAllEstates();
+    }
+
+    public void createEstate(Estate estate) {
+        estateDao.insertEstate(estate);
     }
 }

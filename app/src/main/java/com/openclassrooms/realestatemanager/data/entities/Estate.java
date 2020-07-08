@@ -4,8 +4,8 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.openclassrooms.realestatemanager.data.room.DateTypeConverter;
-import com.openclassrooms.realestatemanager.data.room.EstateTypeConverter;
+import com.openclassrooms.realestatemanager.data.room.typeconverter.DateTypeConverter;
+import com.openclassrooms.realestatemanager.data.room.typeconverter.EstateTypeConverter;
 
 import java.util.Date;
 

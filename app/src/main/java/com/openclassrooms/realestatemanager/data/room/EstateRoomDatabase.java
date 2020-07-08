@@ -13,8 +13,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.openclassrooms.realestatemanager.data.entities.Estate;
 import com.openclassrooms.realestatemanager.data.entities.EstatePicture;
 import com.openclassrooms.realestatemanager.data.entities.EstateType;
-
-import java.util.Date;
+import com.openclassrooms.realestatemanager.data.room.dao.EstateDao;
+import com.openclassrooms.realestatemanager.data.room.dao.EstatePictureDao;
 
 @Database(entities = {Estate.class, EstatePicture.class}, version = 1, exportSchema = false)
 public abstract class EstateRoomDatabase extends RoomDatabase {
@@ -33,6 +33,7 @@ public abstract class EstateRoomDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             EstateRoomDatabase.class, "MyDatabase.db")
+                            .allowMainThreadQueries()
                             .addCallback(prepopulateDatabase())
                             .build();
                 }
@@ -54,8 +55,8 @@ public abstract class EstateRoomDatabase extends RoomDatabase {
                 contentValues.put("estateId", 1);
                 contentValues.put("estateMainPicture", "");
                 contentValues.put("estateType", EstateType.VILLA.getType());
-                contentValues.put("estatePrice", 1750000d);
-                contentValues.put("estateDescription", "Villa luxe de ouf on se met bien");
+                contentValues.put("estatePrice", 2750000d);
+                contentValues.put("estateDescription", "Villa luxe");
                 contentValues.put("estateSurface", "700m2");
                 contentValues.put("estateNbRooms", 10);
                 contentValues.put("estateNbBathrooms", 4);
@@ -70,7 +71,7 @@ public abstract class EstateRoomDatabase extends RoomDatabase {
                 contentValues.put("estateSoldDate", "null");
                 contentValues.put("estateAgentName", "Anthony Fillion-Maillet");
 
-                db.insert("Estate", OnConflictStrategy.IGNORE, contentValues);
+                db.insert("Estate", OnConflictStrategy.REPLACE, contentValues);
             }
         };
     }

@@ -1,6 +1,397 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="20dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Image principale :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <ImageView
+            android:id="@+id/activity_add_update_estate_img_main"
+            android:layout_width="150dp"
+            android:layout_height="105dp"
+            android:src="@drawable/placeholder"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type de bien :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <RadioGroup
+            android:id="@+id/activity_add_update_estate_rdgroup_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="5dp">
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:columnCount="2">
+                <RadioButton
+                    android:id="@+id/activity_add_update_estate_rdbtn_flat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Appartement"/>
+                <RadioButton
+                    android:id="@+id/activity_add_update_estate_rdbtn_house"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Maison"
+                    android:layout_marginStart="20dp"/>
+                <RadioButton
+                    android:id="@+id/activity_add_update_estate_rdbtn_duplex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Duplex"/>
+                <RadioButton
+                    android:id="@+id/activity_add_update_estate_rdbtn_villa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Villa"
+                    android:layout_marginStart="20dp"/>
+                <RadioButton
+                    android:id="@+id/activity_add_update_estate_rdbtn_mansion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manoir"/>
+                <RadioButton
+                    android:id="@+id/activity_add_update_estate_rdbtn_penthouse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Penthouse"
+                    android:layout_marginStart="20dp"/>
+            </GridLayout>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Prix :"
+            android:textSize="18sp"
+            android:inputType="numberDecimal"
+            android:textColor="@color/colorPrimary"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp">
+
+            <EditText
+                android:id="@+id/activity_add_update_estate_edit_price"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/colorPrimary"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="€"
+                android:textSize="24sp"
+                android:textColor="@color/colorPrimary"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_description"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:inputType="textMultiLine"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Surface :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_surface"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre de pièces :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_nb_rooms"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre de salles de bains :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_nb_bathrooms"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre de chambres :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_nb_bedrooms"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rue :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_street"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Code postal :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_postal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ville :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_city"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pays :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_country"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Points d'intêret :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="5dp">
+            <CheckBox
+                android:id="@+id/activity_add_update_estate_ckbox_school"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="École"/>
+            <CheckBox
+                android:id="@+id/activity_add_update_estate_ckbox_transports"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Transports"
+                android:layout_marginStart="20dp"/>
+            <CheckBox
+                android:id="@+id/activity_add_update_estate_ckbox_parks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Parcs"/>
+            <CheckBox
+                android:id="@+id/activity_add_update_estate_ckbox_health"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Santé"
+                android:layout_marginStart="20dp"/>
+            <CheckBox
+                android:id="@+id/activity_add_update_estate_ckbox_retails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Commerces"/>
+            <CheckBox
+                android:id="@+id/activity_add_update_estate_ckbox_culture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Culture"
+                android:layout_marginStart="20dp"/>
+        </GridLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disponibilité :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <CheckBox
+            android:id="@+id/activity_add_update_estate_ckbox_sold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Le bien a été vendu"
+            android:enabled="false"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom de l'agent :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/activity_add_update_estate_edit_agentname"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Images additionnelles :"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/activity_add_update_estate_img_extra_one"
+                android:layout_width="75dp"
+                android:layout_height="52dp"
+                android:src="@drawable/placeholder"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"/>
+
+            <ImageView
+                android:id="@+id/activity_add_update_estate_img_extra_two"
+                android:layout_width="75dp"
+                android:layout_height="52dp"
+                android:src="@drawable/placeholder"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"/>
+
+            <ImageView
+                android:id="@+id/activity_add_update_estate_img_extra_three"
+                android:layout_width="75dp"
+                android:layout_height="52dp"
+                android:src="@drawable/placeholder"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"/>
+
+            <ImageView
+                android:id="@+id/activity_add_update_estate_img_extra_four"
+                android:layout_width="75dp"
+                android:layout_height="52dp"
+                android:src="@drawable/placeholder"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/activity_add_update_estate_btn_save"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:text="Enregistrer"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="50dp"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/colorWhite"/>
+    </LinearLayout>
+</ScrollView>

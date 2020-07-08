@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.data.room;
+package com.openclassrooms.realestatemanager.data.room.typeconverter;
 
 import androidx.room.TypeConverter;
 

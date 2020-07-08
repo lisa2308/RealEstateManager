@@ -2,7 +2,7 @@ package com.openclassrooms.realestatemanager.di;
 
 import android.content.Context;
 
-import com.openclassrooms.realestatemanager.data.room.EstateDataRepository;
+import com.openclassrooms.realestatemanager.data.room.repo.EstateDataRepository;
 import com.openclassrooms.realestatemanager.data.room.EstateRoomDatabase;
 import com.openclassrooms.realestatemanager.data.viewmodel.ViewModelFactory;
 

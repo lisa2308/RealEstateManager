@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.data.room;
+package com.openclassrooms.realestatemanager.data.room.typeconverter;
 
 import androidx.room.TypeConverter;
 
@@ -9,7 +9,7 @@ import java.util.Date;
 public class EstateTypeConverter {
     @TypeConverter
     public EstateType fromEstateType(String value) {
-        return value == null ? null : EstateType.valueOf(value);
+        return value == null ? null : EstateType.fromDisplayString(value);
     }
 
     @TypeConverter
