@@ -17,14 +17,14 @@ import java.util.List;
 public interface EstatePictureDao {
 
     @Query("SELECT * FROM EstatePicture WHERE estatePictureEstateId = :estateId")
-    LiveData<List<EstatePicture>> getAllEstatePictures(int estateId);
+    LiveData<List<EstatePicture>> getAllEstatePictures(long estateId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertEstatePicture(EstatePicture estatePicture);
 
     @Update
-    int updateEstatePicture(EstatePicture estatePicture);
+    void updateEstatePicture(EstatePicture estatePicture);
 
     @Query("DELETE FROM EstatePicture WHERE estatePictureId = :estatePictureId")
-    int deleteEstatePicture(int estatePictureId);
+    void deleteEstatePicture(long estatePictureId);
 }

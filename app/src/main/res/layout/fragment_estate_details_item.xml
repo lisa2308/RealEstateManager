@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="110dp"
+    android:layout_height="110dp"
+    android:layout_margin="5dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@color/quantum_lightblue100"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/colorBlack"
+        android:layout_alignParentBottom="true"
+        android:alpha=".2"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Descriptio fdsfdsn"
+        android:textColor="@color/colorBlack"
+        android:gravity="center"
+        android:ellipsize="end"
+        android:lines="1"
+        android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.data.entities;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
@@ -13,8 +14,9 @@ import java.util.Date;
 public class Estate {
 
     @PrimaryKey(autoGenerate = true)
-    private int estateId;
-    private String estateMainPicture;
+    private long estateId;
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    private byte[] estateMainPicture;
     @TypeConverters(EstateTypeConverter.class)
     private EstateType estateType;
     private double estatePrice;
@@ -27,6 +29,8 @@ public class Estate {
     private String estatePostal;
     private String estateCity;
     private String estateCountry;
+    private double estateLat;
+    private double estateLng;
     private String estatePointsOfInterest;
     private boolean estateHasBeenSold;
     @TypeConverters(DateTypeConverter.class)
@@ -37,19 +41,19 @@ public class Estate {
 
     public Estate() {}
 
-    public int getEstateId() {
+    public long getEstateId() {
         return estateId;
     }
 
-    public void setEstateId(int estateId) {
+    public void setEstateId(long estateId) {
         this.estateId = estateId;
     }
 
-    public String getEstateMainPicture() {
+    public byte[] getEstateMainPicture() {
         return estateMainPicture;
     }
 
-    public void setEstateMainPicture(String estateMainPicture) {
+    public void setEstateMainPicture(byte[] estateMainPicture) {
         this.estateMainPicture = estateMainPicture;
     }
 
@@ -139,6 +143,22 @@ public class Estate {
 
     public void setEstateCountry(String estateCountry) {
         this.estateCountry = estateCountry;
+    }
+
+    public double getEstateLat() {
+        return estateLat;
+    }
+
+    public void setEstateLat(double estateLat) {
+        this.estateLat = estateLat;
+    }
+
+    public double getEstateLng() {
+        return estateLng;
+    }
+
+    public void setEstateLng(double estateLng) {
+        this.estateLng = estateLng;
     }
 
     public String getEstatePointsOfInterest() {

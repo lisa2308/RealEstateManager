@@ -19,7 +19,7 @@ public class EstateDataRepository {
         return estateDao.getAllEstates();
     }
 
-    public void createEstate(Estate estate) {
-        estateDao.insertEstate(estate);
+    public long createEstate(Estate estate) {
+        return estateDao.insertEstate(estate);
     }
 }

@@ -15,6 +15,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            resValue 'string', 'google_map_key', googleMapKey
+        }
     }
     compileOptions {
         sourceCompatibility = 1.8
@@ -46,4 +49,12 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.5.0'
 
     implementation 'com.karumi:dexter:6.2.0'
+    implementation 'commons-io:commons-io:2.5'
+
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'com.facebook.stetho:stetho-okhttp:1.5.1'
+
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.libraries.places:places:2.0.0'
 }

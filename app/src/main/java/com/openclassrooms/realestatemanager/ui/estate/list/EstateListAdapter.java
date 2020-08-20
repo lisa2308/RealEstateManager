@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.estate.list;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +66,11 @@ public class EstateListAdapter extends RecyclerView.Adapter<EstateListAdapter.Fr
         holder.txtType.setText(estate.getEstateType().getType());
         holder.txtCity.setText(estate.getEstateCity());
         holder.txtPrice.setText(formatter.format(estate.getEstatePrice()));
+
+        if (estate.getEstateMainPicture() != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(estate.getEstateMainPicture(), 0, estate.getEstateMainPicture().length);
+            holder.mainPicture.setImageBitmap(bmp);
+        }
 
         holder.itemView.setOnClickListener(v -> clickListener.onItemClicked(holder, estate, position));
     }

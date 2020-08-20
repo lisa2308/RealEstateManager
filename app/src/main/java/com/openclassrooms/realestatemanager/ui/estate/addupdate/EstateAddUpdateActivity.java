@@ -1,9 +1,15 @@
 package com.openclassrooms.realestatemanager.ui.estate.addupdate;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.os.FileUtils;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -20,6 +26,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.features.ReturnMode;
 import com.esafirm.imagepicker.model.Image;
+import com.google.android.gms.maps.model.LatLng;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -27,12 +34,17 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Estate;
+import com.openclassrooms.realestatemanager.data.entities.EstatePicture;
 import com.openclassrooms.realestatemanager.data.entities.EstateType;
 import com.openclassrooms.realestatemanager.data.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.data.viewmodel.ViewModelFactory;
 import com.openclassrooms.realestatemanager.di.Injection;
 import com.openclassrooms.realestatemanager.ui.estate.list.EstateListFragment;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -119,10 +131,48 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
     @BindView(R.id.activity_add_update_estate_edit_surface)
     EditText editSurface;
 
+    @BindView(R.id.activity_add_update_estate_img_extra_one)
+    ImageView imgExtraOne;
+
+    @BindView(R.id.activity_add_update_estate_edit_extra_one)
+    EditText editExtraOne;
+
+    @BindView(R.id.activity_add_update_estate_img_extra_two)
+    ImageView imgExtraTwo;
+
+    @BindView(R.id.activity_add_update_estate_edit_extra_two)
+    EditText editExtraTwo;
+
+    @BindView(R.id.activity_add_update_estate_img_extra_three)
+    ImageView imgExtraThree;
+
+    @BindView(R.id.activity_add_update_estate_edit_extra_three)
+    EditText editExtraThree;
+
+    @BindView(R.id.activity_add_update_estate_img_extra_four)
+    ImageView imgExtraFour;
+
+    @BindView(R.id.activity_add_update_estate_edit_extra_four)
+    EditText editExtraFour;
+
     boolean mainImageHasBeenAdded = false;
-    boolean typeHasBeenAdded = false;
-    boolean pointsOfInterestHasBeenAdded = false;
-    boolean oneExtraImageHasBeenAdded = false;
+    boolean extraOneImageHasBeenAdded = false;
+    boolean extraTwoImageHasBeenAdded = false;
+    boolean extraThreeImageHasBeenAdded = false;
+    boolean extraFourImageHasBeenAdded = false;
+    EstateType estateType = null;
+
+    boolean mainImgIsBeingModified = false;
+    boolean extraOneImgIsBeingModified = false;
+    boolean extraTwoImgIsBeingModified = false;
+    boolean extraThreeImgIsBeingModified = false;
+    boolean extraFourImgIsBeingModified = false;
+
+    byte[] bytesMain;
+    byte[] bytesExtraOne;
+    byte[] bytesExtraTwo;
+    byte[] bytesExtraThree;
+    byte[] bytesExtraFour;
 
     EstateViewModel estateViewModel;
 
@@ -157,6 +207,35 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
 
     @OnClick(R.id.activity_add_update_estate_img_main)
     public void addMainPicture() {
+        mainImgIsBeingModified = true;
+        askPermissionAndOpenGallery();
+    }
+
+    @OnClick(R.id.activity_add_update_estate_img_extra_one)
+    public void addExtraPictureOne() {
+        extraOneImgIsBeingModified = true;
+        askPermissionAndOpenGallery();
+    }
+
+    @OnClick(R.id.activity_add_update_estate_img_extra_two)
+    public void addExtraPictureTwo() {
+        extraTwoImgIsBeingModified = true;
+        askPermissionAndOpenGallery();
+    }
+
+    @OnClick(R.id.activity_add_update_estate_img_extra_three)
+    public void addExtraPictureThree() {
+        extraThreeImgIsBeingModified = true;
+        askPermissionAndOpenGallery();
+    }
+
+    @OnClick(R.id.activity_add_update_estate_img_extra_four)
+    public void addExtraPictureFour() {
+        extraFourImgIsBeingModified = true;
+        askPermissionAndOpenGallery();
+    }
+
+    public void askPermissionAndOpenGallery() {
         Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.CAMERA,
@@ -178,16 +257,90 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
             }
             @Override
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                mainImgIsBeingModified = false;
+                extraOneImgIsBeingModified = false;
+                extraTwoImgIsBeingModified = false;
+                extraThreeImgIsBeingModified = false;
+                extraFourImgIsBeingModified = false;
                 token.continuePermissionRequest();
             }
         }).check();
+    }
+
+    @OnClick({
+            R.id.activity_add_update_estate_rdbtn_flat,
+            R.id.activity_add_update_estate_rdbtn_duplex,
+            R.id.activity_add_update_estate_rdbtn_house,
+            R.id.activity_add_update_estate_rdbtn_mansion,
+            R.id.activity_add_update_estate_rdbtn_penthouse,
+            R.id.activity_add_update_estate_rdbtn_villa
+    })
+    public void onRadioButtonClicked(RadioButton radioButton) {
+        rdButtonFlat.setChecked(false);
+        rdButtonDuplex.setChecked(false);
+        rdButtonHouse.setChecked(false);
+        rdButtonMansion.setChecked(false);
+        rdButtonPenthouse.setChecked(false);
+        rdButtonVilla.setChecked(false);
+
+        switch (radioButton.getId()) {
+            case R.id.activity_add_update_estate_rdbtn_flat:
+                rdButtonFlat.setChecked(true);
+                estateType = EstateType.FLAT;
+                break;
+            case R.id.activity_add_update_estate_rdbtn_duplex:
+                rdButtonDuplex.setChecked(true);
+                estateType = EstateType.DUPLEX;
+                break;
+            case R.id.activity_add_update_estate_rdbtn_house:
+                rdButtonHouse.setChecked(true);
+                estateType = EstateType.HOUSE;
+                break;
+            case R.id.activity_add_update_estate_rdbtn_mansion:
+                rdButtonMansion.setChecked(true);
+                estateType = EstateType.MANSION;
+                break;
+            case R.id.activity_add_update_estate_rdbtn_penthouse:
+                rdButtonPenthouse.setChecked(true);
+                estateType = EstateType.PENTHOUSE;
+                break;
+            case R.id.activity_add_update_estate_rdbtn_villa:
+                rdButtonVilla.setChecked(true);
+                estateType = EstateType.VILLA;
+                break;
+        }
+    }
+
+    public String getPointOfInterest() {
+        String pointOfInterests = "";
+
+        if (ckCulture.isChecked()) {
+            pointOfInterests += "culture ";
+        }
+        if (ckHealth.isChecked()) {
+            pointOfInterests += "sante ";
+        }
+        if (ckParks.isChecked()) {
+            pointOfInterests += "parcs ";
+        }
+        if (ckRetails.isChecked()) {
+            pointOfInterests += "commerces ";
+        }
+        if (ckSchool.isChecked()) {
+            pointOfInterests += "ecole ";
+        }
+        if (ckTransports.isChecked()) {
+            pointOfInterests += "transports ";
+        }
+
+        return pointOfInterests;
     }
 
     @OnClick(R.id.activity_add_update_estate_btn_save)
     public void saveEstate() {
         if (!mainImageHasBeenAdded) {
             showToastMessage("Merci d'ajouter une image principale");
-        } else if (!typeHasBeenAdded) {
+        } else if (estateType == null) {
             showToastMessage("Merci d'ajouter un type");
         } else if (editPrice.getText().toString().isEmpty()) {
             showToastMessage("Merci d'ajouter un prix");
@@ -209,32 +362,100 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
             showToastMessage("Merci d'ajouter une ville");
         } else if (editCountry.getText().toString().isEmpty()) {
             showToastMessage("Merci d'ajouter un pays");
-        } else if (!pointsOfInterestHasBeenAdded) {
-            showToastMessage("Merci d'ajouter un point d'intêret");
         } else if (editAgentName.getText().toString().isEmpty()) {
             showToastMessage("Merci d'ajouter le nom de l'agent");
-        } else if (!oneExtraImageHasBeenAdded) {
+        } else if (!extraOneImageHasBeenAdded && !extraTwoImageHasBeenAdded &&
+                   !extraThreeImageHasBeenAdded && !extraFourImageHasBeenAdded) {
             showToastMessage("Merci d'ajouter au moins une image extra");
         } else {
+            String street = editStreet.getText().toString();
+            String postal = editPostal.getText().toString();
+            String city = editCity.getText().toString();
+            String country = editCountry.getText().toString();
+            String address = street + " " + postal + ", " + city + ", " + country;
+            LatLng latLng = getLocationFromAddress(address);
+
+            if (latLng == null) {
+                showToastMessage("Adresse non valide");
+                return;
+            }
+
             Estate estate = new Estate();
-            estate.setEstateMainPicture("");
-            estate.setEstateType(EstateType.VILLA);
-            estate.setEstatePrice(1750000d);
-            estate.setEstateDescription("Villa luxe de ouf on se met bien");
-            estate.setEstateSurface("700m2");
-            estate.setEstateNbRooms(10);
-            estate.setEstateNbBathrooms(4);
-            estate.setEstateNbBedrooms(5);
-            estate.setEstateStreet("18 rue Rivoli");
-            estate.setEstatePostal("75001");
-            estate.setEstateCity("Paris");
-            estate.setEstateCountry("France");
-            estate.setEstatePointsOfInterest("school parcs");
+            estate.setEstateMainPicture(bytesMain);
+            estate.setEstateType(estateType);
+            estate.setEstatePrice(Double.parseDouble(editPrice.getText().toString()));
+            estate.setEstateDescription(editDescription.getText().toString());
+            estate.setEstateSurface(editSurface.getText().toString());
+            estate.setEstateNbRooms(Integer.parseInt(editNbRooms.getText().toString()));
+            estate.setEstateNbBathrooms(Integer.parseInt(editNbBathrooms.getText().toString()));
+            estate.setEstateNbBedrooms(Integer.parseInt(editNbBedrooms.getText().toString()));
+            estate.setEstateStreet(street);
+            estate.setEstatePostal(postal);
+            estate.setEstateCity(city);
+            estate.setEstateCountry(country);
+            estate.setEstateLat(latLng.latitude);
+            estate.setEstateLng(latLng.longitude);
+            estate.setEstatePointsOfInterest(getPointOfInterest());
             estate.setEstateHasBeenSold(false);
-            estate.setEstateCreationDate(null);
+            estate.setEstateCreationDate(new Date());
             estate.setEstateSoldDate(null);
-            estate.setEstateAgentName("Anthony Fillion-Maillet");
-            estateViewModel.createEstate(estate);
+            estate.setEstateAgentName(editAgentName.getText().toString());
+            long estateId = estateViewModel.createEstate(estate);
+
+            if (extraOneImageHasBeenAdded) {
+                String description = "/";
+                if (!editExtraOne.getText().toString().isEmpty()) {
+                    description = editExtraOne.getText().toString();
+                }
+
+                EstatePicture estatePicture = new EstatePicture();
+                estatePicture.setEstatePictureEstateId(estateId);
+                estatePicture.setEstatePictureImg(bytesExtraOne);
+                estatePicture.setEstatePictureDescription(description);
+                estateViewModel.createEstatePicture(estatePicture);
+            }
+
+            if (extraTwoImageHasBeenAdded) {
+                String description = "/";
+                if (!editExtraTwo.getText().toString().isEmpty()) {
+                    description = editExtraTwo.getText().toString();
+                }
+
+                EstatePicture estatePicture = new EstatePicture();
+                estatePicture.setEstatePictureEstateId(estateId);
+                estatePicture.setEstatePictureImg(bytesExtraTwo);
+                estatePicture.setEstatePictureDescription(description);
+                estateViewModel.createEstatePicture(estatePicture);
+            }
+
+            if (extraThreeImageHasBeenAdded) {
+                String description = "/";
+                if (!editExtraThree.getText().toString().isEmpty()) {
+                    description = editExtraThree.getText().toString();
+                }
+
+                EstatePicture estatePicture = new EstatePicture();
+                estatePicture.setEstatePictureEstateId(estateId);
+                estatePicture.setEstatePictureImg(bytesExtraThree);
+                estatePicture.setEstatePictureDescription(description);
+                estateViewModel.createEstatePicture(estatePicture);
+            }
+
+            if (extraFourImageHasBeenAdded) {
+                String description = "/";
+                if (!editExtraFour.getText().toString().isEmpty()) {
+                    description = editExtraFour.getText().toString();
+                }
+
+                EstatePicture estatePicture = new EstatePicture();
+                estatePicture.setEstatePictureEstateId(estateId);
+                estatePicture.setEstatePictureImg(bytesExtraFour);
+                estatePicture.setEstatePictureDescription(description);
+                estateViewModel.createEstatePicture(estatePicture);
+            }
+
+            showToastMessage("Le bien a été ajouté");
+            onBackPressed();
         }
     }
 
@@ -245,15 +466,78 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, final int resultCode, Intent data) {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            System.out.println(requestCode);
-            System.out.println(resultCode);
-            System.out.println(data);
-            // Get a list of picked images
-            List<Image> images = ImagePicker.getImages(data);
-            // or get a single image only
-            Image image = ImagePicker.getFirstImageOrNull(data);
+            if (mainImgIsBeingModified) {
+                bytesMain = saveImageBitmap(data, bytesMain);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytesMain, 0, bytesMain.length);
+                imgMain.setImageBitmap(bmp);
+                mainImageHasBeenAdded = true;
+            } else if (extraOneImgIsBeingModified) {
+                bytesExtraOne = saveImageBitmap(data, bytesExtraOne);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytesExtraOne, 0, bytesExtraOne.length);
+                imgExtraOne.setImageBitmap(bmp);
+                extraOneImageHasBeenAdded = true;
+            } else if (extraTwoImgIsBeingModified) {
+                bytesExtraTwo = saveImageBitmap(data, bytesExtraTwo);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytesExtraTwo, 0, bytesExtraTwo.length);
+                imgExtraTwo.setImageBitmap(bmp);
+                extraTwoImageHasBeenAdded = true;
+            } else if (extraThreeImgIsBeingModified) {
+                bytesExtraThree = saveImageBitmap(data, bytesExtraThree);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytesExtraThree, 0, bytesExtraThree.length);
+                imgExtraThree.setImageBitmap(bmp);
+                extraThreeImageHasBeenAdded = true;
+            } else if (extraFourImgIsBeingModified) {
+                bytesExtraFour = saveImageBitmap(data, bytesExtraFour);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytesExtraFour, 0, bytesExtraFour.length);
+                imgExtraFour.setImageBitmap(bmp);
+                extraFourImageHasBeenAdded = true;
+            }
         }
+
+        mainImgIsBeingModified = false;
+        extraOneImgIsBeingModified = false;
+        extraTwoImgIsBeingModified = false;
+        extraThreeImgIsBeingModified = false;
+        extraFourImgIsBeingModified = false;
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public byte[] saveImageBitmap(Intent data, byte[] bytesToChange) {
+        // Get a list of picked images
+        Image image = ImagePicker.getFirstImageOrNull(data);
+        Bitmap bitmap = BitmapFactory.decodeFile(image.getPath());
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+        bytesToChange = stream.toByteArray();
+        if (bitmap != null && !bitmap.isRecycled()) {
+            bitmap.recycle();
+            bitmap = null;
+        }
+
+        return bytesToChange;
+    }
+
+    public LatLng getLocationFromAddress(String strAddress) {
+        Geocoder coder = new Geocoder(this);
+        List<Address> address;
+        LatLng p1 = null;
+
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+
+            Address location = address.get(0);
+            p1 = new LatLng(location.getLatitude(), location.getLongitude() );
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+        }
+
+        return p1;
+    }
 }
