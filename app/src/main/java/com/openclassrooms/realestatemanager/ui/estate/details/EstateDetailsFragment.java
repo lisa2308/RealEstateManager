@@ -1,13 +1,16 @@
 package com.openclassrooms.realestatemanager.ui.estate.details;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,17 +23,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.openclassrooms.realestatemanager.R;
 import com.openclassrooms.realestatemanager.data.entities.Estate;
+import com.openclassrooms.realestatemanager.data.entities.EstatePicture;
 import com.openclassrooms.realestatemanager.data.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.data.viewmodel.ViewModelFactory;
 import com.openclassrooms.realestatemanager.di.Injection;
+import com.openclassrooms.realestatemanager.ui.MainActivity;
+import com.openclassrooms.realestatemanager.ui.estate.addupdate.EstateAddUpdateActivity;
+import com.openclassrooms.realestatemanager.ui.estate.list.EstateListAdapter;
+import com.openclassrooms.realestatemanager.utils.RecyclerViewHolderListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class EstateDetailsFragment extends Fragment implements OnMapReadyCallback {
 
     @BindView(R.id.fragment_estate_details_recycler)
-    RecyclerView recycler;
+    RecyclerView recyclerView;
 
     @BindView(R.id.fragment_estate_details_txt_description)
     TextView txtDescription;
@@ -64,9 +76,10 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
 
     private static final String ESTATE_ID = "estateId";
     private String estateId;
-    private EstateViewModel estateViewModel;
+    private EstateDetailsAdapter estateListAdapter;
 
     private GoogleMap googleMap;
+    MainActivity mainActivity;
 
     public EstateDetailsFragment() {}
 
@@ -84,8 +97,7 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
         if (getArguments() != null) {
             estateId = getArguments().getString(ESTATE_ID);
         }
-        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(getActivity());
-        estateViewModel = ViewModelProviders.of(this, mViewModelFactory).get(EstateViewModel.class);
+        mainActivity = (MainActivity) getActivity();
     }
 
     @Override
@@ -94,10 +106,18 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
         View view = inflater.inflate(R.layout.fragment_estate_details, container, false);
         ButterKnife.bind(this, view);
 
+        initRecycler();
         setupMapView(savedInstanceState);
         observeEstateViewModel();
 
         return view;
+    }
+
+    private void initRecycler() {
+        estateListAdapter = new EstateDetailsAdapter(new ArrayList<>());
+        recyclerView.setAdapter(estateListAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     private void setupMapView(Bundle savedInstanceState) {
@@ -106,8 +126,8 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void observeEstateViewModel() {
-        if (estateViewModel.getCurrentEstateList() != null) {
-            estateViewModel.getCurrentEstateList().observe(this, estateList -> {
+        if (mainActivity.getViewModel().getCurrentEstateList() != null) {
+            mainActivity.getViewModel().getCurrentEstateList().observe(this, estateList -> {
                 for (Estate estate : estateList) {
                     if (String.valueOf(estate.getEstateId()).equals(estateId)) {
                         updateViews(estate);
@@ -116,6 +136,10 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
                 }
             });
         }
+
+        mainActivity.getViewModel().getCurrentEstatePictureList(Long.parseLong(estateId)).observe(this, estatePictureList -> {
+            updateAdapter(estatePictureList);
+        });
     }
 
     private void updateViews(Estate estate) {
@@ -130,6 +154,10 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
         txtCountry.setText(estate.getEstateCountry());
 
         showEstateOnMap(estate);
+    }
+
+    private void updateAdapter(List<EstatePicture> estatePictureList) {
+        estateListAdapter.setData(estatePictureList);
     }
 
     private void showEstateOnMap(Estate estate) {
@@ -158,5 +186,12 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
         this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         this.googleMap.getUiSettings().setCompassEnabled(false);
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
+    }
+
+    @OnClick(R.id.fragment_estate_details_img_edit)
+    public void editEstate() {
+        Intent intent = new Intent(getContext(), EstateAddUpdateActivity.class);
+        intent.putExtra("estateId", estateId);
+        startActivity(intent);
     }
 }

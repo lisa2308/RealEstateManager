@@ -1,5 +1,7 @@
 package com.openclassrooms.realestatemanager.data.entities;
 
+import android.content.ContentValues;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -19,7 +21,7 @@ public class Estate {
     private byte[] estateMainPicture;
     @TypeConverters(EstateTypeConverter.class)
     private EstateType estateType;
-    private double estatePrice;
+    private int estatePrice;
     private String estateDescription;
     private String estateSurface;
     private int estateNbRooms;
@@ -65,11 +67,11 @@ public class Estate {
         this.estateType = estateType;
     }
 
-    public double getEstatePrice() {
+    public int getEstatePrice() {
         return estatePrice;
     }
 
-    public void setEstatePrice(double estatePrice) {
+    public void setEstatePrice(int estatePrice) {
         this.estatePrice = estatePrice;
     }
 
@@ -199,5 +201,33 @@ public class Estate {
 
     public void setEstateAgentName(String estateAgentName) {
         this.estateAgentName = estateAgentName;
+    }
+
+    // --- UTILS ---
+    public static Estate fromContentValues(ContentValues values) {
+        final Estate estate = new Estate();
+
+        if (values.containsKey("estateId")) estate.setEstateId(values.getAsLong("estateId"));
+        if (values.containsKey("estateMainPicture")) estate.setEstateMainPicture(values.getAsByteArray("estateMainPicture"));
+        if (values.containsKey("estateType")) estate.setEstateType(EstateType.fromDisplayString(values.getAsString("estateType")));
+        if (values.containsKey("estatePrice")) estate.setEstatePrice(values.getAsInteger("estatePrice"));
+        if (values.containsKey("estateDescription")) estate.setEstateDescription(values.getAsString("estateDescription"));
+        if (values.containsKey("estateSurface")) estate.setEstateSurface(values.getAsString("estateSurface"));
+        if (values.containsKey("estateNbRooms")) estate.setEstateNbRooms(values.getAsInteger("estateNbRooms"));
+        if (values.containsKey("estateNbBathrooms")) estate.setEstateNbBathrooms(values.getAsInteger("estateNbBathrooms"));
+        if (values.containsKey("estateNbBedrooms")) estate.setEstateNbBedrooms(values.getAsInteger("estateNbBedrooms"));
+        if (values.containsKey("estateStreet")) estate.setEstateStreet(values.getAsString("estateStreet"));
+        if (values.containsKey("estatePostal")) estate.setEstatePostal(values.getAsString("estatePostal"));
+        if (values.containsKey("estateCity")) estate.setEstateCity(values.getAsString("estateCity"));
+        if (values.containsKey("estateCountry")) estate.setEstateCountry(values.getAsString("estateCountry"));
+        if (values.containsKey("estateLat")) estate.setEstateLat(values.getAsDouble("estateLat"));
+        if (values.containsKey("estateLng")) estate.setEstateLng(values.getAsDouble("estateLng"));
+        if (values.containsKey("estatePointsOfInterest")) estate.setEstatePointsOfInterest(values.getAsString("estatePointsOfInterest"));
+        if (values.containsKey("estateHasBeenSold")) estate.setEstateHasBeenSold(values.getAsBoolean("estateHasBeenSold"));
+        if (values.containsKey("estateCreationDate")) estate.setEstateCreationDate(new Date(values.getAsLong("estateCreationDate")));
+        if (values.containsKey("estateSoldDate")) estate.setEstateSoldDate(new Date(values.getAsLong("estateSoldDate")));
+        if (values.containsKey("estateAgentName")) estate.setEstateAgentName(values.getAsString("estateAgentName"));
+
+        return estate;
     }
 }

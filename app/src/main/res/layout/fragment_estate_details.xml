@@ -12,17 +12,33 @@
         android:orientation="vertical"
         android:layout_margin="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Media"
-            android:textSize="18sp"
-            android:textColor="@color/colorPrimary"/>
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Media"
+                android:textSize="18sp"
+                android:textColor="@color/colorPrimary"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:id="@+id/fragment_estate_details_img_edit"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_pencil"/>
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_estate_details_recycler"
             android:layout_width="wrap_content"
-            android:layout_height="105dp"
+            android:layout_height="120dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"/>
 

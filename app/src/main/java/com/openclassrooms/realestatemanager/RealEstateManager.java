@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.facebook.stetho.Stetho;
 
@@ -9,4 +10,8 @@ public class RealEstateManager extends Application {
         super.onCreate();
         Stetho.initializeWithDefaults(this);
     }
+
+    // todo: affichage tablette
+    // todo: tests
+    // todo: améliorer code (map)
 }

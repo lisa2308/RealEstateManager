@@ -35,13 +35,13 @@ public class EstateListFragment extends Fragment {
     RecyclerView recyclerView;
 
     private EstateListAdapter estateListAdapter;
-    private EstateViewModel estateViewModel;
+
+    MainActivity mainActivity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(getActivity());
-        estateViewModel = ViewModelProviders.of(this, mViewModelFactory).get(EstateViewModel.class);
+        mainActivity = (MainActivity) getActivity();
     }
 
     @Override
@@ -79,8 +79,8 @@ public class EstateListFragment extends Fragment {
     }
 
     private void observeEstateViewModel() {
-        if (estateViewModel.getCurrentEstateList() != null) {
-            estateViewModel.getCurrentEstateList().observe(this, estateList -> {
+        if (mainActivity.getViewModel().getCurrentEstateList() != null) {
+            mainActivity.getViewModel().getCurrentEstateList().observe(this, estateList -> {
                 updateAdapter(estateList);
             });
         }

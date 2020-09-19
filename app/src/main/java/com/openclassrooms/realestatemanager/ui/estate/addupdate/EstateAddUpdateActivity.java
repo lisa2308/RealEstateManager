@@ -176,6 +176,14 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
 
     EstateViewModel estateViewModel;
 
+    String editedEstateId;
+    Estate editedEstate;
+    long editedEstatePictureIdOne = 0;
+    long editedEstatePictureIdTwo = 0;
+    long editedEstatePictureIdThree = 0;
+    long editedEstatePictureIdFour = 0;
+    boolean editMode = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -184,10 +192,19 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
 
         setTitle("Ajouter un bien");
 
+        editedEstateId = getIntent().getStringExtra("estateId");
+        if (editedEstateId != null) {
+            editMode = true;
+        }
+
         // Enable the Up button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initViewModel();
+
+        if (editMode) {
+            observeEstateViewModel();
+        }
     }
 
     @Override
@@ -203,6 +220,106 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
     public void initViewModel() {
         ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(this);
         estateViewModel = ViewModelProviders.of(this, mViewModelFactory).get(EstateViewModel.class);
+    }
+
+    private void observeEstateViewModel() {
+//        if (estateViewModel.getCurrentEstateList() != null) {
+//            estateViewModel.getCurrentEstateList().observe(this, estateList -> {
+//                for (Estate estate : estateList) {
+//                    if (String.valueOf(estate.getEstateId()).equals(editedEstateId)) {
+//                        editedEstate = estate;
+//                        if (editedEstate.getEstateSoldDate() == null) {
+//                            ckSold.setEnabled(true);
+//                        } else {
+//                            ckSold.setChecked(true);
+//                        }
+//
+//                        updateEstateViews(estate);
+//                        break;
+//                    }
+//                }
+//            });
+//        }
+        editedEstate = estateViewModel.getEstate(Long.parseLong(editedEstateId));
+        if (editedEstate.getEstateSoldDate() == null) {
+            ckSold.setEnabled(true);
+        } else {
+            ckSold.setChecked(true);
+        }
+        updateEstateViews(editedEstate);
+
+        estateViewModel.getCurrentEstatePictureList(Long.parseLong(editedEstateId)).observe(this, estatePictureList -> {
+            updateEstatePictures(estatePictureList);
+        });
+    }
+
+    public void updateEstateViews(Estate estate) {
+        if (estate.getEstateMainPicture() != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(estate.getEstateMainPicture(), 0, estate.getEstateMainPicture().length);
+            imgMain.setImageBitmap(bmp);
+            bytesMain = estate.getEstateMainPicture();
+            mainImageHasBeenAdded = true;
+        }
+
+        estateType = estate.getEstateType();
+        switch (estateType) {
+            case FLAT: rdButtonFlat.setChecked(true); break;
+            case HOUSE: rdButtonHouse.setChecked(true); break;
+            case VILLA: rdButtonVilla.setChecked(true); break;
+            case DUPLEX: rdButtonDuplex.setChecked(true); break;
+            case MANSION: rdButtonMansion.setChecked(true); break;
+            case PENTHOUSE: rdButtonPenthouse.setChecked(true); break;
+        }
+
+        editPrice.setText(String.valueOf(estate.getEstatePrice()));
+        editDescription.setText(estate.getEstateDescription());
+        editSurface.setText(estate.getEstateSurface());
+        editNbRooms.setText(String.valueOf(estate.getEstateNbRooms()));
+        editNbBathrooms.setText(String.valueOf(estate.getEstateNbBathrooms()));
+        editNbBedrooms.setText(String.valueOf(estate.getEstateNbBedrooms()));
+        editStreet.setText(estate.getEstateStreet());
+        editPostal.setText(estate.getEstatePostal());
+        editCity.setText(estate.getEstateCity());
+        editCountry.setText(estate.getEstateCountry());
+
+        setPointOfInterest(estate.getEstatePointsOfInterest());
+
+        editAgentName.setText(estate.getEstateAgentName());
+    }
+
+    public void updateEstatePictures(List<EstatePicture> estatePictures) {
+        int index = 0;
+        for (EstatePicture estatePicture : estatePictures) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(estatePicture.getEstatePictureImg(), 0, estatePicture.getEstatePictureImg().length);
+
+            if (index == 0) {
+                imgExtraOne.setImageBitmap(bmp);
+                bytesExtraOne = estatePicture.getEstatePictureImg();
+                editExtraOne.setText(estatePicture.getEstatePictureDescription());
+                extraOneImageHasBeenAdded = true;
+                editedEstatePictureIdOne = estatePicture.getEstatePictureId();
+            } else if (index == 1) {
+                imgExtraTwo.setImageBitmap(bmp);
+                bytesExtraTwo = estatePicture.getEstatePictureImg();
+                editExtraTwo.setText(estatePicture.getEstatePictureDescription());
+                extraTwoImageHasBeenAdded = true;;
+                editedEstatePictureIdTwo = estatePicture.getEstatePictureId();
+            } else if (index == 2) {
+                imgExtraThree.setImageBitmap(bmp);
+                bytesExtraThree = estatePicture.getEstatePictureImg();
+                editExtraThree.setText(estatePicture.getEstatePictureDescription());
+                extraThreeImageHasBeenAdded = true;;
+                editedEstatePictureIdThree = estatePicture.getEstatePictureId();
+            } else {
+                imgExtraFour.setImageBitmap(bmp);
+                bytesExtraFour = estatePicture.getEstatePictureImg();
+                editExtraFour.setText(estatePicture.getEstatePictureDescription());
+                extraFourImageHasBeenAdded = true;;
+                editedEstatePictureIdFour = estatePicture.getEstatePictureId();
+            }
+
+            index += 1;
+        }
     }
 
     @OnClick(R.id.activity_add_update_estate_img_main)
@@ -311,6 +428,27 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
         }
     }
 
+    public void setPointOfInterest(String pointOfInterest) {
+        if (pointOfInterest.contains("culture")) {
+            ckCulture.setChecked(true);
+        }
+        if (pointOfInterest.contains("sante")) {
+            ckHealth.setChecked(true);
+        }
+        if (pointOfInterest.contains("parcs")) {
+            ckParks.setChecked(true);
+        }
+        if (pointOfInterest.contains("commerces")) {
+            ckRetails.setChecked(true);
+        }
+        if (pointOfInterest.contains("ecole")) {
+            ckSchool.setChecked(true);
+        }
+        if (pointOfInterest.contains("transports")) {
+            ckTransports.setChecked(true);
+        }
+    }
+
     public String getPointOfInterest() {
         String pointOfInterests = "";
 
@@ -379,11 +517,12 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
                 showToastMessage("Adresse non valide");
                 return;
             }
+            long estateId = 0;
 
             Estate estate = new Estate();
             estate.setEstateMainPicture(bytesMain);
             estate.setEstateType(estateType);
-            estate.setEstatePrice(Double.parseDouble(editPrice.getText().toString()));
+            estate.setEstatePrice(Integer.parseInt(editPrice.getText().toString()));
             estate.setEstateDescription(editDescription.getText().toString());
             estate.setEstateSurface(editSurface.getText().toString());
             estate.setEstateNbRooms(Integer.parseInt(editNbRooms.getText().toString()));
@@ -396,11 +535,34 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
             estate.setEstateLat(latLng.latitude);
             estate.setEstateLng(latLng.longitude);
             estate.setEstatePointsOfInterest(getPointOfInterest());
-            estate.setEstateHasBeenSold(false);
-            estate.setEstateCreationDate(new Date());
-            estate.setEstateSoldDate(null);
             estate.setEstateAgentName(editAgentName.getText().toString());
-            long estateId = estateViewModel.createEstate(estate);
+
+            // CREATE
+            if (!editMode) {
+                estate.setEstateHasBeenSold(false);
+                estate.setEstateCreationDate(new Date());
+                estate.setEstateSoldDate(null);
+
+                estateId = estateViewModel.createEstate(estate);
+            }
+            // EDIT
+            else {
+                estate.setEstateHasBeenSold(ckSold.isChecked());
+                estate.setEstateCreationDate(editedEstate.getEstateCreationDate());
+                if (ckSold.isChecked()) {
+                    if (editedEstate.getEstateSoldDate() != null) {
+                        estate.setEstateSoldDate(editedEstate.getEstateSoldDate());
+                    } else {
+                        estate.setEstateSoldDate(new Date());
+                    }
+                } else {
+                    estate.setEstateSoldDate(null);
+                }
+
+                estateId = Long.parseLong(editedEstateId);
+                estate.setEstateId(estateId);
+                estateViewModel.updateEstate(estate);
+            }
 
             if (extraOneImageHasBeenAdded) {
                 String description = "/";
@@ -412,7 +574,17 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
                 estatePicture.setEstatePictureEstateId(estateId);
                 estatePicture.setEstatePictureImg(bytesExtraOne);
                 estatePicture.setEstatePictureDescription(description);
-                estateViewModel.createEstatePicture(estatePicture);
+
+                if (!editMode) {
+                    estateViewModel.createEstatePicture(estatePicture);
+                } else {
+                    if (editedEstatePictureIdOne == 0) {
+                        estateViewModel.createEstatePicture(estatePicture);
+                    } else {
+                        estatePicture.setEstatePictureId(editedEstatePictureIdOne);
+                        estateViewModel.updateEstatePicture(estatePicture);
+                    }
+                }
             }
 
             if (extraTwoImageHasBeenAdded) {
@@ -425,7 +597,17 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
                 estatePicture.setEstatePictureEstateId(estateId);
                 estatePicture.setEstatePictureImg(bytesExtraTwo);
                 estatePicture.setEstatePictureDescription(description);
-                estateViewModel.createEstatePicture(estatePicture);
+
+                if (!editMode) {
+                    estateViewModel.createEstatePicture(estatePicture);
+                } else {
+                    if (editedEstatePictureIdTwo == 0) {
+                        estateViewModel.createEstatePicture(estatePicture);
+                    } else {
+                        estatePicture.setEstatePictureId(editedEstatePictureIdTwo);
+                        estateViewModel.updateEstatePicture(estatePicture);
+                    }
+                }
             }
 
             if (extraThreeImageHasBeenAdded) {
@@ -438,7 +620,17 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
                 estatePicture.setEstatePictureEstateId(estateId);
                 estatePicture.setEstatePictureImg(bytesExtraThree);
                 estatePicture.setEstatePictureDescription(description);
-                estateViewModel.createEstatePicture(estatePicture);
+
+                if (!editMode) {
+                    estateViewModel.createEstatePicture(estatePicture);
+                } else {
+                    if (editedEstatePictureIdThree == 0) {
+                        estateViewModel.createEstatePicture(estatePicture);
+                    } else {
+                        estatePicture.setEstatePictureId(editedEstatePictureIdThree);
+                        estateViewModel.updateEstatePicture(estatePicture);
+                    }
+                }
             }
 
             if (extraFourImageHasBeenAdded) {
@@ -451,10 +643,24 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
                 estatePicture.setEstatePictureEstateId(estateId);
                 estatePicture.setEstatePictureImg(bytesExtraFour);
                 estatePicture.setEstatePictureDescription(description);
-                estateViewModel.createEstatePicture(estatePicture);
+
+                if (!editMode) {
+                    estateViewModel.createEstatePicture(estatePicture);
+                } else {
+                    if (editedEstatePictureIdFour == 0) {
+                        estateViewModel.createEstatePicture(estatePicture);
+                    } else {
+                        estatePicture.setEstatePictureId(editedEstatePictureIdFour);
+                        estateViewModel.updateEstatePicture(estatePicture);
+                    }
+                }
             }
 
-            showToastMessage("Le bien a été ajouté");
+            if (!editMode) {
+                showToastMessage("Le bien a été ajouté");
+            } else {
+                showToastMessage("Le bien a été modifié");
+            }
             onBackPressed();
         }
     }

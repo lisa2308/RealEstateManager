@@ -47,6 +47,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_map_key"/>
+
+        <provider
+            android:name=".data.room.provider.EstateContentProvider"
+            android:authorities="com.openclassrooms.realesatemanager.data.room.provider"
+            android:exported="true"/>
     </application>
 
 </manifest>

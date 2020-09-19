@@ -20,7 +20,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EstateListAdapter extends RecyclerView.Adapter<EstateListAdapter.FragmentEstateHolder> {
+public class EstateListAdapter extends RecyclerView.Adapter<EstateListAdapter.EstateListHolder> {
 
     private List<Estate> estateList;
     private RecyclerViewHolderListener clickListener;
@@ -32,9 +32,15 @@ public class EstateListAdapter extends RecyclerView.Adapter<EstateListAdapter.Fr
         this.clickListener = clickListener;
     }
 
-    public static class FragmentEstateHolder extends RecyclerView.ViewHolder {
+    public static class EstateListHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.fragment_estate_list_item_main_picture)
         ImageView mainPicture;
+
+        @BindView(R.id.fragment_estate_list_item_view_filter_sold)
+        View viewFilter;
+
+        @BindView(R.id.fragment_estate_list_item_txt_filter_sold)
+        TextView txtFilter;
 
         @BindView(R.id.fragment_estate_list_item_type)
         TextView txtType;
@@ -45,23 +51,31 @@ public class EstateListAdapter extends RecyclerView.Adapter<EstateListAdapter.Fr
         @BindView(R.id.fragment_estate_list_item_price)
         TextView txtPrice;
 
-        public FragmentEstateHolder(View view) {
+        public EstateListHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
     }
 
     @Override
-    public FragmentEstateHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public EstateListHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_estate_list_item, parent, false);
 
-        return new FragmentEstateHolder(itemView);
+        return new EstateListHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final FragmentEstateHolder holder, final int position) {
+    public void onBindViewHolder(final EstateListHolder holder, final int position) {
         final Estate estate = estateList.get(position);
+
+        if (estate.getEstateSoldDate() != null) {
+            holder.viewFilter.setVisibility(View.VISIBLE);
+            holder.txtFilter.setVisibility(View.VISIBLE);
+        } else {
+            holder.viewFilter.setVisibility(View.GONE);
+            holder.txtFilter.setVisibility(View.GONE);
+        }
 
         holder.txtType.setText(estate.getEstateType().getType());
         holder.txtCity.setText(estate.getEstateCity());

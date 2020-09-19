@@ -6,26 +6,33 @@
     android:layout_margin="5dp">
 
     <ImageView
+        android:id="@+id/fragment_estate_details_item_img_pic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@color/quantum_lightblue100"/>
+        android:src="@color/quantum_lightblue100"
+        android:scaleType="centerCrop"/>
 
-    <View
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/colorBlack"
-        android:layout_alignParentBottom="true"
-        android:alpha=".2"/>
+        android:layout_alignParentBottom="true">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:text="Descriptio fdsfdsn"
-        android:textColor="@color/colorBlack"
-        android:gravity="center"
-        android:ellipsize="end"
-        android:lines="1"
-        android:layout_margin="5dp"
-        android:layout_alignParentBottom="true"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorBlack"
+            android:alpha=".5"/>
+
+        <TextView
+            android:id="@+id/fragment_estate_details_item_txt_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Descriptio fdsfdssdsn"
+            android:textColor="@color/colorWhite"
+            android:gravity="center"
+            android:ellipsize="end"
+            android:lines="2"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -2,48 +2,53 @@ package com.openclassrooms.realestatemanager.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-import com.esafirm.imagepicker.features.ImagePicker;
-import com.esafirm.imagepicker.features.ReturnMode;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.material.button.MaterialButton;
 import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.openclassrooms.realestatemanager.R;
+import com.openclassrooms.realestatemanager.data.viewmodel.EstateViewModel;
+import com.openclassrooms.realestatemanager.data.viewmodel.ViewModelFactory;
+import com.openclassrooms.realestatemanager.di.Injection;
 import com.openclassrooms.realestatemanager.ui.estate.addupdate.EstateAddUpdateActivity;
+import com.openclassrooms.realestatemanager.ui.estate.details.EstateDetailsFragment;
 import com.openclassrooms.realestatemanager.ui.estate.list.EstateListFragment;
+import com.openclassrooms.realestatemanager.ui.estate.search.SearchFragment;
 import com.openclassrooms.realestatemanager.ui.loan.LoanActivity;
 import com.openclassrooms.realestatemanager.ui.map.MapActivity;
 import com.openclassrooms.realestatemanager.utils.Utils;
 
-import java.util.List;
-
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationClient;
+    private EstateViewModel estateViewModel;
+
+    @BindView(R.id.activity_main_btn_reinit_filters)
+    MaterialButton btnReinitFilters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +56,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(this);
+        estateViewModel = ViewModelProviders.of(this, mViewModelFactory).get(EstateViewModel.class);
+
         addFragment(R.id.activity_main_frame_layout_list, new EstateListFragment(), 0, 0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        estateViewModel.initCurrentEstateList();
+    }
+
+    public EstateViewModel getViewModel() {
+        return estateViewModel;
     }
 
     @Override
@@ -69,6 +87,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, EstateAddUpdateActivity.class));
                 return true;
             case R.id.activity_main_menu_search:
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment f = fm.findFragmentById(R.id.activity_main_frame_layout_list);
+                if (f instanceof SearchFragment) {
+                    onBackPressed();
+                } else {
+                    addFragment(
+                            R.id.activity_main_frame_layout_list,
+                            new SearchFragment(),
+                            R.anim.slide_in_top,
+                            R.anim.slide_out_bottom
+                    );
+                }
                 return true;
             case R.id.activity_main_menu_loan_simulator:
                 startActivity(new Intent(this, LoanActivity.class));
@@ -140,5 +170,17 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    @OnClick(R.id.activity_main_btn_reinit_filters)
+    public void reinitFilters() {
+        estateViewModel.initCurrentEstateList();
+        hideReinitFiltersBtn();
+    }
 
+    public void showReinitFiltersBtn() {
+        btnReinitFilters.setVisibility(View.VISIBLE);
+    }
+
+    public void hideReinitFiltersBtn() {
+        btnReinitFilters.setVisibility(View.GONE);
+    }
 }

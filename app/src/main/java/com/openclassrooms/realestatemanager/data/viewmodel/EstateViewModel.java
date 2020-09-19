@@ -1,7 +1,10 @@
 package com.openclassrooms.realestatemanager.data.viewmodel;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import com.openclassrooms.realestatemanager.data.entities.Estate;
 import com.openclassrooms.realestatemanager.data.entities.EstatePicture;
@@ -20,6 +23,7 @@ public class EstateViewModel extends ViewModel {
 
     // DATA
     private LiveData<List<Estate>> currentEstateList;
+    private MutableLiveData<List<Estate>> searchEstateList = new MutableLiveData<>();
 
     public EstateViewModel(EstateDataRepository estateDataRepository,
                            EstatePictureDataRepository estatePictureDataRepository,
@@ -29,19 +33,39 @@ public class EstateViewModel extends ViewModel {
         this.executor = executor;
     }
 
-    public LiveData<List<Estate>> getCurrentEstateList() {
-        return estateDataRepository.getEstateList();
+    public void initCurrentEstateList() {
+        searchEstateList.setValue(estateDataRepository.getEstateList());
+    }
+
+    public MutableLiveData<List<Estate>> getCurrentEstateList() {
+        return searchEstateList;
+    }
+
+    public void getSearchEstateList(SupportSQLiteQuery sqLiteQuery) {
+        searchEstateList.setValue(estateDataRepository.getSearchEstateList(sqLiteQuery));
+    }
+
+    public Estate getEstate(long estateId) {
+        return estateDataRepository.getEstate(estateId);
     }
 
     public long createEstate(Estate estate) {
         return estateDataRepository.createEstate(estate);
     }
 
+    public void updateEstate(Estate estate) {
+        estateDataRepository.updateEstate(estate);
+    }
+
+    public LiveData<List<EstatePicture>> getCurrentEstatePictureList(long estateId) {
+        return estatePictureDataRepository.getEstatePictureList(estateId);
+    }
+
     public long createEstatePicture(EstatePicture estatePicture) {
         return estatePictureDataRepository.createEstatePicture(estatePicture);
     }
 
-    public void updateEstate(long estateId ) {
-
+    public void updateEstatePicture(EstatePicture estatePicture) {
+        estatePictureDataRepository.updateEstatePicture(estatePicture);
     }
 }

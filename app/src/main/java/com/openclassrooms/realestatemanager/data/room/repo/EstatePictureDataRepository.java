@@ -24,4 +24,8 @@ public class EstatePictureDataRepository {
     public long createEstatePicture(EstatePicture estatePicture) {
         return estatePictureDao.insertEstatePicture(estatePicture);
     }
+
+    public void updateEstatePicture(EstatePicture estatePicture) {
+        estatePictureDao.updateEstatePicture(estatePicture);
+    }
 }
