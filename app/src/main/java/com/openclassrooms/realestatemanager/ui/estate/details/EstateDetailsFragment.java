@@ -75,7 +75,11 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
     MapView mapView;
 
     private static final String ESTATE_ID = "estateId";
+    private static final String ESTATE_LAT = "estateLat";
+    private static final String ESTATE_LNG = "estateLng";
     private String estateId;
+    private Double estateLat;
+    private Double estateLng;
     private EstateDetailsAdapter estateListAdapter;
 
     private GoogleMap googleMap;
@@ -83,10 +87,12 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
 
     public EstateDetailsFragment() {}
 
-    public static EstateDetailsFragment newInstance(String param) {
+    public static EstateDetailsFragment newInstance(String estateId, double estateLat, double estateLng) {
         EstateDetailsFragment fragment = new EstateDetailsFragment();
         Bundle args = new Bundle();
-        args.putString(ESTATE_ID, param);
+        args.putString(ESTATE_ID, estateId);
+        args.putDouble(ESTATE_LAT, estateLat);
+        args.putDouble(ESTATE_LNG, estateLng);
         fragment.setArguments(args);
         return fragment;
     }
@@ -96,6 +102,8 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             estateId = getArguments().getString(ESTATE_ID);
+            estateLat = getArguments().getDouble(ESTATE_LAT);
+            estateLng = getArguments().getDouble(ESTATE_LNG);
         }
         mainActivity = (MainActivity) getActivity();
     }
@@ -152,22 +160,20 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
         txtPostal.setText(estate.getEstatePostal());
         txtCity.setText(estate.getEstateCity());
         txtCountry.setText(estate.getEstateCountry());
-
-        showEstateOnMap(estate);
     }
 
     private void updateAdapter(List<EstatePicture> estatePictureList) {
         estateListAdapter.setData(estatePictureList);
     }
 
-    private void showEstateOnMap(Estate estate) {
+    private void showEstateOnMap() {
         if (this.googleMap == null) {
             return;
         }
 
         LatLng latLng = new LatLng(
-          estate.getEstateLat(),
-          estate.getEstateLng()
+            estateLat,
+            estateLng
         );
 
         this.googleMap.addMarker(new MarkerOptions()
@@ -186,6 +192,8 @@ public class EstateDetailsFragment extends Fragment implements OnMapReadyCallbac
         this.googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         this.googleMap.getUiSettings().setCompassEnabled(false);
         this.googleMap.getUiSettings().setMapToolbarEnabled(false);
+
+        showEstateOnMap();
     }
 
     @OnClick(R.id.fragment_estate_details_img_edit)

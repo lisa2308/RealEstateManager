@@ -21,6 +21,7 @@ import com.openclassrooms.realestatemanager.data.viewmodel.EstateViewModel;
 import com.openclassrooms.realestatemanager.data.viewmodel.ViewModelFactory;
 import com.openclassrooms.realestatemanager.di.Injection;
 import com.openclassrooms.realestatemanager.ui.MainActivity;
+import com.openclassrooms.realestatemanager.ui.estate.list.EstateListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +86,27 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         ButterKnife.bind(this, view);
+
+        if (savedInstanceState != null) {
+            String estateTypeSaved = savedInstanceState.getString("estateType");
+            if (estateTypeSaved.isEmpty()) {
+                estateType = null;
+            } else {
+                estateType = EstateType.fromDisplayString(estateTypeSaved);
+            }
+        }
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (estateType == null) {
+            outState.putString("estateType", "");
+        } else {
+            outState.putString("estateType", estateType.getType());
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @OnClick(R.id.fragment_search_btn_search)

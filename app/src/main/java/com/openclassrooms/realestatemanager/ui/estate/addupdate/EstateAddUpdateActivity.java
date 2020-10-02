@@ -202,9 +202,102 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
 
         initViewModel();
 
-        if (editMode) {
-            observeEstateViewModel();
+        if (savedInstanceState != null) {
+            bytesMain = savedInstanceState.getByteArray("bytesMain");
+            mainImgIsBeingModified = savedInstanceState.getBoolean("mainImgIsBeingModified");
+            mainImageHasBeenAdded = savedInstanceState.getBoolean("mainImageHasBeenAdded");
+            if (bytesMain != null) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytesMain, 0, bytesMain.length);
+                imgMain.setImageBitmap(bmp);
+            }
+
+            bytesExtraOne = savedInstanceState.getByteArray("bytesExtraOne");
+            extraOneImgIsBeingModified = savedInstanceState.getBoolean("extraOneImgIsBeingModified");
+            extraOneImageHasBeenAdded = savedInstanceState.getBoolean("extraOneImageHasBeenAdded");
+            if (bytesExtraOne != null) {
+                Bitmap bmpExtraOne = BitmapFactory.decodeByteArray(bytesExtraOne, 0, bytesExtraOne.length);
+                imgExtraOne.setImageBitmap(bmpExtraOne);
+            }
+
+            bytesExtraTwo = savedInstanceState.getByteArray("bytesExtraTwo");
+            extraTwoImgIsBeingModified = savedInstanceState.getBoolean("extraTwoImgIsBeingModified");
+            extraTwoImageHasBeenAdded = savedInstanceState.getBoolean("extraTwoImageHasBeenAdded");
+            if (bytesExtraTwo != null) {
+                Bitmap bmpExtraTwo = BitmapFactory.decodeByteArray(bytesExtraTwo, 0, bytesExtraTwo.length);
+                imgExtraTwo.setImageBitmap(bmpExtraTwo);
+            }
+            
+            bytesExtraThree = savedInstanceState.getByteArray("bytesExtraThree");
+            extraThreeImgIsBeingModified = savedInstanceState.getBoolean("extraThreeImgIsBeingModified");
+            extraThreeImageHasBeenAdded = savedInstanceState.getBoolean("extraThreeImageHasBeenAdded");
+            if (bytesExtraThree != null) {
+                Bitmap bmpExtraThree = BitmapFactory.decodeByteArray(bytesExtraThree, 0, bytesExtraThree.length);
+                imgExtraThree.setImageBitmap(bmpExtraThree);
+            }
+            
+            bytesExtraFour = savedInstanceState.getByteArray("bytesExtraFour");
+            extraFourImgIsBeingModified = savedInstanceState.getBoolean("extraFourImgIsBeingModified");
+            extraFourImageHasBeenAdded = savedInstanceState.getBoolean("extraFourImageHasBeenAdded");
+            if (bytesExtraFour != null) {
+                Bitmap bmpExtraFour = BitmapFactory.decodeByteArray(bytesExtraFour, 0, bytesExtraFour.length);
+                imgExtraFour.setImageBitmap(bmpExtraFour);
+            }
+
+            editedEstatePictureIdOne = savedInstanceState.getLong("editedEstatePictureIdOne");
+            editedEstatePictureIdTwo = savedInstanceState.getLong("editedEstatePictureIdTwo");
+            editedEstatePictureIdThree = savedInstanceState.getLong("editedEstatePictureIdThree");
+            editedEstatePictureIdFour = savedInstanceState.getLong("editedEstatePictureIdFour");
+
+            String estateTypeSaved = savedInstanceState.getString("estateType");
+            if (estateTypeSaved.isEmpty()) {
+                estateType = null;
+            } else {
+                estateType = EstateType.fromDisplayString(estateTypeSaved);
+            }
         }
+
+        if (editMode) {
+            if (savedInstanceState == null) {
+                observeEstateViewModel();
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putByteArray("bytesMain", bytesMain);
+        outState.putBoolean("mainImgIsBeingModified", mainImgIsBeingModified);
+        outState.putBoolean("mainImageHasBeenAdded", mainImageHasBeenAdded);
+
+        outState.putByteArray("bytesExtraOne", bytesExtraOne);
+        outState.putBoolean("extraOneImgIsBeingModified", extraOneImgIsBeingModified);
+        outState.putBoolean("extraOneImageHasBeenAdded", extraOneImageHasBeenAdded);
+
+        outState.putByteArray("bytesExtraTwo", bytesExtraTwo);
+        outState.putBoolean("extraTwoImgIsBeingModified", extraTwoImgIsBeingModified);
+        outState.putBoolean("extraTwoImageHasBeenAdded", extraTwoImageHasBeenAdded);
+
+        outState.putByteArray("bytesExtraThree", bytesExtraThree);
+        outState.putBoolean("extraThreeImgIsBeingModified", extraThreeImgIsBeingModified);
+        outState.putBoolean("extraThreeImageHasBeenAdded", extraThreeImageHasBeenAdded);
+
+        outState.putByteArray("bytesExtraFour", bytesExtraFour);
+        outState.putBoolean("extraFourImgIsBeingModified", extraFourImgIsBeingModified);
+        outState.putBoolean("extraFourImageHasBeenAdded", extraFourImageHasBeenAdded);
+
+        outState.putLong("editedEstatePictureIdOne", editedEstatePictureIdOne);
+        outState.putLong("editedEstatePictureIdTwo", editedEstatePictureIdTwo);
+        outState.putLong("editedEstatePictureIdThree", editedEstatePictureIdThree);
+        outState.putLong("editedEstatePictureIdFour", editedEstatePictureIdFour);
+
+        if (estateType == null) {
+            outState.putString("estateType", "");
+        } else {
+            outState.putString("estateType", estateType.getType());
+        }
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -223,23 +316,6 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
     }
 
     private void observeEstateViewModel() {
-//        if (estateViewModel.getCurrentEstateList() != null) {
-//            estateViewModel.getCurrentEstateList().observe(this, estateList -> {
-//                for (Estate estate : estateList) {
-//                    if (String.valueOf(estate.getEstateId()).equals(editedEstateId)) {
-//                        editedEstate = estate;
-//                        if (editedEstate.getEstateSoldDate() == null) {
-//                            ckSold.setEnabled(true);
-//                        } else {
-//                            ckSold.setChecked(true);
-//                        }
-//
-//                        updateEstateViews(estate);
-//                        break;
-//                    }
-//                }
-//            });
-//        }
         editedEstate = estateViewModel.getEstate(Long.parseLong(editedEstateId));
         if (editedEstate.getEstateSoldDate() == null) {
             ckSold.setEnabled(true);
@@ -302,7 +378,7 @@ public class EstateAddUpdateActivity extends AppCompatActivity {
                 imgExtraTwo.setImageBitmap(bmp);
                 bytesExtraTwo = estatePicture.getEstatePictureImg();
                 editExtraTwo.setText(estatePicture.getEstatePictureDescription());
-                extraTwoImageHasBeenAdded = true;;
+                extraTwoImageHasBeenAdded = true;
                 editedEstatePictureIdTwo = estatePicture.getEstatePictureId();
             } else if (index == 2) {
                 imgExtraThree.setImageBitmap(bmp);

@@ -46,12 +46,22 @@ public class LoanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loan_simulator);
         ButterKnife.bind(this);
 
+        if (savedInstanceState != null) {
+            duration = savedInstanceState.getInt("duration");
+        }
+
         setTitle("Loan simulator");
 
         // Enable the Up button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupEditText();
         setupSeekBar();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("duration", duration);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

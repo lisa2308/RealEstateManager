@@ -63,7 +63,11 @@ public class EstateListFragment extends Fragment {
             MainActivity activity = (MainActivity) getActivity();
             activity.addFragment(
                 R.id.activity_main_frame_layout_list,
-                EstateDetailsFragment.newInstance(String.valueOf(estate.getEstateId())),
+                EstateDetailsFragment.newInstance(
+                        String.valueOf(estate.getEstateId()),
+                        estate.getEstateLat(),
+                        estate.getEstateLng()
+                ),
                 R.anim.slide_in_left,
                 R.anim.slide_out_right
             );

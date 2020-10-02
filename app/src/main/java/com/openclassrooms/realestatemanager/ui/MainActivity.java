@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.activity_main_btn_reinit_filters)
     MaterialButton btnReinitFilters;
 
+    boolean reinitFilterVisible = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +61,27 @@ public class MainActivity extends AppCompatActivity {
         ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(this);
         estateViewModel = ViewModelProviders.of(this, mViewModelFactory).get(EstateViewModel.class);
 
-        addFragment(R.id.activity_main_frame_layout_list, new EstateListFragment(), 0, 0);
+        if (savedInstanceState == null) {
+            addFragment(R.id.activity_main_frame_layout_list, new EstateListFragment(), 0, 0);
+        } else {
+            reinitFilterVisible = savedInstanceState.getBoolean("reinitFilterVisible");
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("reinitFilterVisible", btnReinitFilters.getVisibility() == View.VISIBLE);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        estateViewModel.initCurrentEstateList();
+        if (!reinitFilterVisible) {
+            estateViewModel.initCurrentEstateList();
+        } else {
+            btnReinitFilters.setVisibility(View.VISIBLE);
+        }
     }
 
     public EstateViewModel getViewModel() {

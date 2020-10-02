@@ -61,6 +61,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void loadEstatesOnMap() {
         ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(this);
         estateViewModel = ViewModelProviders.of(this, mViewModelFactory).get(EstateViewModel.class);
+        estateViewModel.initCurrentEstateList();
 
         estateViewModel.getCurrentEstateList().observe(this, estateList -> {
             for (Estate estate : estateList) {
