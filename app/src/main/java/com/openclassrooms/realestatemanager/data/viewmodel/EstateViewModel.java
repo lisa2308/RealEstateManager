@@ -22,7 +22,6 @@ public class EstateViewModel extends ViewModel {
     private final Executor executor;
 
     // DATA
-    private LiveData<List<Estate>> currentEstateList;
     private MutableLiveData<List<Estate>> searchEstateList = new MutableLiveData<>();
 
     public EstateViewModel(EstateDataRepository estateDataRepository,

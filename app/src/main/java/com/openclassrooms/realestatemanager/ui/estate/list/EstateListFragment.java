@@ -60,20 +60,32 @@ public class EstateListFragment extends Fragment {
 
         RecyclerViewHolderListener clickListener = (viewHolder, item, pos) -> {
             Estate estate = (Estate) item;
-            MainActivity activity = (MainActivity) getActivity();
-            activity.addFragment(
-                R.id.activity_main_frame_layout_list,
-                EstateDetailsFragment.newInstance(
-                        String.valueOf(estate.getEstateId()),
-                        estate.getEstateLat(),
-                        estate.getEstateLng()
-                ),
-                R.anim.slide_in_left,
-                R.anim.slide_out_right
-            );
+            if (!mainActivity.isTablet()) {
+                mainActivity.addFragment(
+                        R.id.activity_main_frame_layout_list,
+                        EstateDetailsFragment.newInstance(
+                                String.valueOf(estate.getEstateId()),
+                                estate.getEstateLat(),
+                                estate.getEstateLng()
+                        ),
+                        R.anim.slide_in_left,
+                        R.anim.slide_out_right
+                );
+            } else {
+                mainActivity.replaceFragment(
+                        R.id.activity_main_frame_layout_detail,
+                        EstateDetailsFragment.newInstance(
+                                String.valueOf(estate.getEstateId()),
+                                estate.getEstateLat(),
+                                estate.getEstateLng()
+                        ),
+                        0,
+                        0
+                );
+            }
         };
 
-        estateListAdapter = new EstateListAdapter(new ArrayList<>(), clickListener);
+        estateListAdapter = new EstateListAdapter(new ArrayList<>(), clickListener, mainActivity);
         recyclerView.setAdapter(estateListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }

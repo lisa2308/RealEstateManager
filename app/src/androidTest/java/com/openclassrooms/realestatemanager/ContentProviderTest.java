@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4ClassRunner.class)
-public class InstrumentedTest {
+public class ContentProviderTest {
 
     // FOR DATA
     private ContentResolver mContentResolver;

@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -51,12 +52,15 @@ public class MainActivity extends AppCompatActivity {
     MaterialButton btnReinitFilters;
 
     boolean reinitFilterVisible = false;
+    boolean isTablet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        isTablet = getResources().getBoolean(R.bool.isTablet);
 
         ViewModelFactory mViewModelFactory = Injection.provideViewModelFactory(this);
         estateViewModel = ViewModelProviders.of(this, mViewModelFactory).get(EstateViewModel.class);
@@ -82,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             btnReinitFilters.setVisibility(View.VISIBLE);
         }
+
+        hideDetailsFragment();
     }
 
     public EstateViewModel getViewModel() {
@@ -103,24 +109,39 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, EstateAddUpdateActivity.class));
                 return true;
             case R.id.activity_main_menu_search:
-                FragmentManager fm = getSupportFragmentManager();
-                Fragment f = fm.findFragmentById(R.id.activity_main_frame_layout_list);
-                if (f instanceof SearchFragment) {
-                    onBackPressed();
+                if (!isTablet) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    Fragment f = fm.findFragmentById(R.id.activity_main_frame_layout_list);
+                    if (f instanceof SearchFragment) {
+                        onBackPressed();
+                    } else {
+                        addFragment(
+                                R.id.activity_main_frame_layout_list,
+                                new SearchFragment(),
+                                R.anim.slide_in_top,
+                                R.anim.slide_out_bottom
+                        );
+                    }
                 } else {
-                    addFragment(
-                            R.id.activity_main_frame_layout_list,
-                            new SearchFragment(),
-                            R.anim.slide_in_top,
-                            R.anim.slide_out_bottom
-                    );
+                    FragmentManager fm = getSupportFragmentManager();
+                    Fragment f = fm.findFragmentById(R.id.activity_main_frame_layout_global);
+                    if (f instanceof SearchFragment) {
+                        onBackPressed();
+                    } else {
+                        addFragment(
+                                R.id.activity_main_frame_layout_global,
+                                new SearchFragment(),
+                                R.anim.slide_in_top,
+                                R.anim.slide_out_bottom
+                        );
+                    }
                 }
                 return true;
             case R.id.activity_main_menu_loan_simulator:
                 startActivity(new Intent(this, LoanActivity.class));
                 return true;
             case R.id.activity_main_menu_map:
-                if (Utils.isInternetAvailable(this)) {
+                if (Utils.isNetworkAvailable(this)) {
                     askLocationPermission();
                 } else {
                     Toast.makeText(this, "Connexion internet indisponible", Toast.LENGTH_LONG).show();
@@ -128,6 +149,27 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!isTablet) {
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment f = fm.findFragmentById(R.id.activity_main_frame_layout_list);
+            if (f instanceof SearchFragment || f instanceof EstateDetailsFragment) {
+                super.onBackPressed();
+                return;
+            }
+            finishAffinity();
+        } else {
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment f = fm.findFragmentById(R.id.activity_main_frame_layout_global);
+            if (f instanceof SearchFragment) {
+                super.onBackPressed();
+                return;
+            }
+            finishAffinity();
         }
     }
 
@@ -148,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 }).check();
     }
 
+    @SuppressLint("MissingPermission")
     private void requestLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fusedLocationClient.getLastLocation()
@@ -194,9 +237,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void showReinitFiltersBtn() {
         btnReinitFilters.setVisibility(View.VISIBLE);
+        hideDetailsFragment();
     }
 
     public void hideReinitFiltersBtn() {
         btnReinitFilters.setVisibility(View.GONE);
+    }
+
+    public boolean isTablet() {
+        return isTablet;
+    }
+
+    public void hideDetailsFragment() {
+        // hide details if tablet
+        if (isTablet) {
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment f = fm.findFragmentById(R.id.activity_main_frame_layout_detail);
+            if (f instanceof EstateDetailsFragment) {
+                fm.beginTransaction().remove(fm.findFragmentById(R.id.activity_main_frame_layout_detail)).commit();
+            }
+        }
     }
 }

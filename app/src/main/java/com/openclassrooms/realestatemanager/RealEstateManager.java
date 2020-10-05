@@ -10,8 +10,4 @@ public class RealEstateManager extends Application {
         super.onCreate();
         Stetho.initializeWithDefaults(this);
     }
-
-    // todo: affichage tablette
-    // todo: tests
-    // todo: améliorer code (map)
 }

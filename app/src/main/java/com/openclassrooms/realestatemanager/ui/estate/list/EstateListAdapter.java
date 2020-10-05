@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.estate.list;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.openclassrooms.realestatemanager.R;
@@ -25,11 +27,15 @@ public class EstateListAdapter extends RecyclerView.Adapter<EstateListAdapter.Es
     private List<Estate> estateList;
     private RecyclerViewHolderListener clickListener;
     private DecimalFormat formatter = new DecimalFormat("#,### €");
+    private int selectedIndex = -1;
+    private Context context;
 
     public EstateListAdapter(List<Estate> estateList,
-                             RecyclerViewHolderListener clickListener) {
+                             RecyclerViewHolderListener clickListener,
+                             Context context) {
         this.estateList = estateList;
         this.clickListener = clickListener;
+        this.context = context;
     }
 
     public static class EstateListHolder extends RecyclerView.ViewHolder {
@@ -86,7 +92,23 @@ public class EstateListAdapter extends RecyclerView.Adapter<EstateListAdapter.Es
             holder.mainPicture.setImageBitmap(bmp);
         }
 
-        holder.itemView.setOnClickListener(v -> clickListener.onItemClicked(holder, estate, position));
+        holder.itemView.setOnClickListener(v -> {
+            clickListener.onItemClicked(holder, estate, position);
+//            if (context.getResources().getBoolean(R.bool.isTablet)) {
+//                selectedIndex = position;
+//                notifyDataSetChanged();
+//            }
+        });
+
+//        if (context.getResources().getBoolean(R.bool.isTablet)) {
+//            if (selectedIndex == position) {
+//                holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+//                holder.txtPrice.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
+//            } else {
+//                holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorLighterGrey));
+//                holder.txtPrice.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+//            }
+//        }
     }
 
     @Override
